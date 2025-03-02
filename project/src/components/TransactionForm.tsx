@@ -47,6 +47,7 @@ export default function TransactionForm({
   const [aiThinking, setAiThinking] = useState(false);
   const [aiConfidence, setAiConfidence] = useState(0);
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>(baseCurrency);
+  const [lastPrediction, setLastPrediction] = useState<string>('');
   
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -77,32 +78,38 @@ export default function TransactionForm({
   }, [currencyCode, currencies]);
 
   useEffect(() => {
-    // Predict category based on description
-    if (description && description.length > 3) {
-      // Simulate AI thinking
+    let timer: NodeJS.Timeout;
+
+    if (description && description.length >= 3 && description !== lastPrediction) {
       setAiThinking(true);
+      setSuggestedCategory(undefined);
       
-      // Debounce the prediction to simulate AI processing
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         const predicted = onPredict(description);
         setSuggestedCategory(predicted);
         setAiThinking(false);
+        setLastPrediction(description);
         
         // Simulate confidence score
         setAiConfidence(Math.random() * 0.3 + 0.7); // 70-100% confidence
-      }, 500);
-      
-      return () => clearTimeout(timer);
-    } else {
+      }, 1000);
+    } else if (!description || description.length < 3) {
       setSuggestedCategory(undefined);
       setAiThinking(false);
+      setLastPrediction('');
+      setAiConfidence(0);
     }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [description, onPredict]);
 
   const applySuggestedCategory = () => {
     if (suggestedCategory) {
       setValue('categoryId', suggestedCategory.id);
       setSuggestedCategory(undefined);
+      setLastPrediction('');  // Reset last prediction when category is applied
     }
   };
 

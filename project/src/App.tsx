@@ -37,10 +37,8 @@ function AppContent() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { checkBudgetAlerts } = useBudget();
   
-  // Use a ref to track if we've already checked budgets
   const budgetsCheckedRef = useRef(false);
   
-  // Check budget alerts only once when transactions are loaded
   useEffect(() => {
     if (transactions.length > 0 && !budgetsCheckedRef.current && user) {
       checkBudgetAlerts(transactions);
@@ -58,14 +56,16 @@ function AppContent() {
       
       <main className="container mx-auto px-4 py-8 md:px-8">
         {!user && !isAuthLoading && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 text-center">
-            <h2 className="text-xl font-semibold text-blue-800 mb-2">Welcome to Paisa Controller</h2>
-            <p className="text-blue-700 mb-4">
-              Sign in or create an account to save your transactions and access them from anywhere.
-            </p>
-            <p className="text-sm text-blue-600">
-              You can still use the app without signing in, but your data won't be saved.
-            </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+            <div className="text-center">
+              <h2 className="text-xl font-semibold text-blue-800 mb-2">Welcome to Paisa Controller</h2>
+              <p className="text-blue-700 mb-4">
+                Sign in to access all features including AI-powered categorization and cloud sync.
+              </p>
+              <p className="text-sm text-blue-600">
+                Demo mode: You can try basic features, but data won't be saved.
+              </p>
+            </div>
           </div>
         )}
         
@@ -117,7 +117,7 @@ function AppContent() {
       <footer className="bg-white py-6 mt-12">
         <div className="container mx-auto px-4 md:px-8">
           <p className="text-center text-gray-500">
-            © 2025 Paisa Controller - AI-Powered Expense & Budget Manager
+            2025 Paisa Controller - AI-Powered Expense & Budget Manager
           </p>
         </div>
       </footer>
